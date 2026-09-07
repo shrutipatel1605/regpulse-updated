@@ -1,0 +1,425 @@
+/**
+ * RegPulse v2 mock data — plausible Indian banking scenarios.
+ * Ported from the claude.ai/design handoff bundle (regpulsev2/project/data/mock.js).
+ * Used by screens whose corresponding backend endpoints don't yet emit the
+ * executive-brief shape the redesign requires (dashboard hero, ticker,
+ * heatmap, debates, learnings, exposure-by-team). Pages that DO have live
+ * APIs (history, circular library, action items, account, etc.) still read
+ * from TanStack Query — the mock is only a fallback when the backend is
+ * empty or unreachable so the terminal stays alive in demo / dev.
+ */
+
+export type Impact = "high" | "med" | "low";
+
+export interface TickerItem {
+  tag: string;
+  text: string;
+  impact: Impact;
+}
+
+export interface CircularMock {
+  id: string;
+  num: string;
+  title: string;
+  dept: string;
+  date: string;
+  daysAgo: number;
+  impact: Impact;
+  status: "active" | "superseded";
+  tags: string[];
+  pages?: number;
+  deadline?: string;
+  teams?: string[];
+  summary?: string;
+  supersededBy?: string;
+  live?: boolean;
+}
+
+export interface ActivityItem {
+  when: string;
+  type: "circ" | "ask" | "save" | "learn" | "debate";
+  text: string;
+  impact?: Impact;
+}
+
+export interface ActionMock {
+  id: string;
+  title: string;
+  team: string;
+  priority: Impact;
+  due: string;
+  status: "pending" | "in-progress" | "done";
+  owner: string;
+  src: string;
+}
+
+export interface HistoryMock {
+  id: string;
+  q: string;
+  when: string;
+  risk: Impact;
+  conf: number;
+  teams: string[];
+}
+
+export interface SavedMock {
+  id: string;
+  title: string;
+  q: string;
+  when: string;
+  tags: string[];
+}
+
+export interface LearningMock {
+  id: string;
+  title: string;
+  by: string;
+  when: string;
+  src: string;
+  tags: string[];
+  note?: string;
+}
+
+export interface DebateMsg {
+  who: string;
+  role: string;
+  when: string;
+  text: string;
+  refs?: number;
+}
+
+export interface FeaturedAnswer {
+  id: string;
+  question: string;
+  askedBy: string;
+  askedAt: string;
+  risk: Impact;
+  confidence: number;
+  dek: string;
+  body: Array<{ text: string; annot?: boolean; annotId?: string }>;
+  citations: Array<{ num: string; section: string; quote: string }>;
+  actions: Array<{ team: string; priority: Impact; text: string; due: string }>;
+  debate: DebateMsg[];
+}
+
+export interface HeatmapRow {
+  name: string;
+  vals: number[];
+}
+
+export const RP_DATA = {
+  user: {
+    name: "Priya Menon",
+    role: "Chief Compliance Officer",
+    org: "Axis Bank Ltd.",
+    initials: "PM",
+    email: "priya.menon@axisbank.com",
+    credits: 182,
+    plan: "Enterprise",
+    team: ["PM", "RK", "AS", "VN", "DK"],
+  },
+
+  market: {
+    asOf: "21 Apr 2026 · 10:42 IST",
+    rbiRate: { repo: 6.25, reverse: 6.0, srf: 6.5, crr: 4.0, slr: 18.0 },
+    usdInr: 83.41,
+    ticker: [
+      { tag: "CIRC", text: "DOR.CAP.REC.22/21.01.002 — SBR Framework revisions", impact: "high" },
+      { tag: "NEWS", text: "RBI opens consultation on expected credit loss (ECL) framework", impact: "med" },
+      { tag: "CIRC", text: "Master Direction on KYC — Amendment dated 19 Apr 2026", impact: "high" },
+      { tag: "DATA", text: "RepoRate 6.25% · CRR 4.00% · SLR 18.00%", impact: "low" },
+      { tag: "CIRC", text: "FEMA — ECB external benchmark linkage deadline extended to 30 Sep", impact: "med" },
+      { tag: "NEWS", text: "SBI, HDFC, Axis brief Gov. Das on digital lending guardrails", impact: "low" },
+      { tag: "ALRT", text: "Priority Sector Lending shortfall — Q4 FY26 filing due in 9 days", impact: "high" },
+    ] as TickerItem[],
+  },
+
+  pulse: {
+    totalCirculars: 4821,
+    thisWeek: 7,
+    superseded: 3,
+    questionsAsked: 1842,
+    questionsAnswered: 1812,
+    learningsCaptured: 96,
+    sparkline: [3, 5, 2, 8, 6, 9, 4, 11, 7, 10, 12, 9, 13, 15, 11, 17, 14, 19, 16, 21, 18, 22, 20, 24, 21, 26, 23, 28],
+  },
+
+  heatmap: {
+    cols: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    rows: [
+      { name: "KYC / AML",         vals: [3, 2, 7, 4, 5, 1, 0] },
+      { name: "Priority Sector",   vals: [1, 4, 2, 6, 8, 2, 0] },
+      { name: "SBR Framework",     vals: [5, 2, 3, 9, 7, 3, 1] },
+      { name: "Digital Lending",   vals: [2, 1, 4, 3, 2, 1, 0] },
+      { name: "FEMA / ECB",        vals: [0, 1, 2, 5, 6, 0, 0] },
+      { name: "Basel III Capital", vals: [4, 3, 2, 1, 2, 1, 0] },
+      { name: "Governance",        vals: [1, 0, 1, 2, 3, 0, 0] },
+    ] as HeatmapRow[],
+  },
+
+  circulars: [
+    {
+      id: "c1",
+      num: "DOR.CAP.REC.22/21.01.002/2026-27",
+      title: "Scale Based Regulation (SBR): Revisions to Capital Adequacy Framework for NBFC-UL",
+      dept: "Dept. of Regulation",
+      date: "20 Apr 2026",
+      daysAgo: 1,
+      impact: "high",
+      status: "active",
+      tags: ["NBFC-UL", "Capital", "SBR"],
+      pages: 14,
+      deadline: "30 Jun 2026",
+      teams: ["Risk", "Capital", "Treasury"],
+      summary:
+        "Raises Tier 1 minimum for Upper Layer NBFCs from 9% to 10% effective FY27; introduces leverage ratio cap at 7×.",
+      live: true,
+    },
+    {
+      id: "c2",
+      num: "DOR.AML.REC.18/14.01.001/2026-27",
+      title: "Master Direction — Know Your Customer (KYC) Amendment",
+      dept: "Dept. of Regulation",
+      date: "19 Apr 2026",
+      daysAgo: 2,
+      impact: "high",
+      status: "active",
+      tags: ["KYC", "AML", "Video-KYC"],
+      pages: 38,
+      deadline: "31 Jul 2026",
+      teams: ["Compliance", "Ops", "Tech"],
+      summary:
+        "Tightens video-KYC liveness requirements; mandates secondary OVD refresh every 3 years for HRAs.",
+    },
+    {
+      id: "c3",
+      num: "FED.FE.REC.09/23.67.001/2026-27",
+      title: "External Commercial Borrowings — Extension of ECB Benchmark Linkage",
+      dept: "Foreign Exchange Dept.",
+      date: "18 Apr 2026",
+      daysAgo: 3,
+      impact: "med",
+      status: "active",
+      tags: ["FEMA", "ECB", "Benchmark"],
+      pages: 6,
+      deadline: "30 Sep 2026",
+      teams: ["Treasury", "FX"],
+      summary:
+        "Extends deadline for transitioning ECB contracts from LIBOR proxies to SOFR/TONA linkage by 90 days.",
+    },
+    {
+      id: "c4",
+      num: "DOR.PSL.REC.07/04.09.001/2026-27",
+      title: "Priority Sector Lending — Target Revisions for FY27",
+      dept: "Dept. of Regulation",
+      date: "15 Apr 2026",
+      daysAgo: 6,
+      impact: "high",
+      status: "active",
+      tags: ["PSL", "Agri", "MSME"],
+      pages: 22,
+      deadline: "31 Mar 2027",
+      teams: ["Retail", "MSME", "Reporting"],
+      summary:
+        "Agri target retained at 18%; introduces 2% sub-target for climate-adaptive agriculture lending.",
+    },
+    {
+      id: "c5",
+      num: "DPSS.CO.PD.04/02.14.003/2026-27",
+      title: "Digital Lending — Fair Practices & Cooling-off Period Clarifications",
+      dept: "Dept. of Payment & Settlement",
+      date: "12 Apr 2026",
+      daysAgo: 9,
+      impact: "med",
+      status: "active",
+      tags: ["Digital Lending", "Consumer"],
+      pages: 11,
+      deadline: "01 Aug 2026",
+      teams: ["Retail", "Tech", "Legal"],
+      summary:
+        "Cooling-off window for digital personal loans raised to 5 days; key fact statement must include total cost annualized.",
+    },
+    {
+      id: "c6",
+      num: "DOR.RET.REC.05/12.01.001/2026-27",
+      title: "Liquidity Coverage Ratio — Transition to Basel III Endgame Buffers",
+      dept: "Dept. of Regulation",
+      date: "09 Apr 2026",
+      daysAgo: 12,
+      impact: "med",
+      status: "active",
+      tags: ["Basel III", "LCR", "HQLA"],
+      pages: 19,
+      deadline: "31 Dec 2026",
+      teams: ["Treasury", "Risk"],
+    },
+    {
+      id: "c7",
+      num: "DOR.GOV.REC.02/29.16.001/2026-27",
+      title: "Corporate Governance — Related Party Transactions (RPT) Framework",
+      dept: "Dept. of Regulation",
+      date: "05 Apr 2026",
+      daysAgo: 16,
+      impact: "low",
+      status: "active",
+      tags: ["Governance", "RPT"],
+      pages: 9,
+    },
+    {
+      id: "c8",
+      num: "DOR.CAP.REC.19/21.01.002/2025-26",
+      title: "Scale Based Regulation (SBR): Capital Adequacy Framework for NBFC-UL",
+      dept: "Dept. of Regulation",
+      date: "14 Nov 2025",
+      daysAgo: 158,
+      impact: "high",
+      status: "superseded",
+      supersededBy: "c1",
+      tags: ["NBFC-UL", "Capital", "SBR"],
+      pages: 11,
+    },
+  ] as CircularMock[],
+
+  featuredAnswer: {
+    id: "q-2041",
+    question:
+      "What changes in the April 20th SBR revision materially affect our Tier-1 planning for FY27, and which teams must we brief this week?",
+    askedBy: "Priya Menon",
+    askedAt: "Today, 10:14 IST",
+    risk: "high",
+    confidence: 0.86,
+    dek:
+      "The April 20 revision lifts the Tier-1 floor for Upper-Layer NBFCs to 10% and introduces a 7× leverage cap — pulling forward a 90bps capital call and making Q3 planning a cross-functional exercise, not a Treasury one.",
+    body: [
+      { text: "The revised framework raises the Tier-1 minimum for Upper-Layer NBFCs from 9% to " },
+      { text: "10% effective 1 April 2027", annot: true, annotId: "a1" },
+      {
+        text:
+          ", with a glide-path allowing phased build-up starting Q2 FY27. On your current trajectory (Tier-1 at 10.4% as of Q3 FY26), the headroom is 40 bps — insufficient given the 25bps buffer requested by the Board's Risk Committee last quarter.",
+      },
+      { text: "In parallel, paragraph 6.3 introduces a " },
+      { text: "hard leverage ratio cap of 7×", annot: true, annotId: "a2" },
+      {
+        text:
+          ", which bites earlier than the capital requirement. Axis is at 5.8× today, but the organic book growth plan (+18% FY27) plus the retail-NBFC arm at ~6.2× consolidated means the cap becomes a binding constraint in Q2 FY27 without corrective action.",
+      },
+      {
+        text:
+          "Three teams must be briefed this week. Treasury, to revise the AT-1 issuance calendar for H2 FY27. Risk, to re-run the 2-year ICAAP with the new floor. Capital Strategy, to assess whether the retail-NBFC subsidiary should be re-tiered under the Middle Layer using the revised asset-size cut-off of ₹12,500 cr.",
+      },
+    ],
+    citations: [
+      {
+        num: "DOR.CAP.REC.22/21.01.002/2026-27",
+        section: "¶ 4.2 (a)",
+        quote:
+          "Upper Layer NBFCs shall maintain Common Equity Tier-1 capital of not less than ten (10) per cent of the risk-weighted assets.",
+      },
+      {
+        num: "DOR.CAP.REC.22/21.01.002/2026-27",
+        section: "¶ 6.3",
+        quote:
+          "A leverage ratio cap of seven times (7×) on-and-off-balance-sheet exposures shall apply on a continuous basis.",
+      },
+      {
+        num: "DOR.CAP.REC.22/21.01.002/2026-27",
+        section: "Annex II",
+        quote:
+          "For the purposes of tier reclassification, the revised asset-size cut-off shall be ₹12,500 crore.",
+      },
+    ],
+    actions: [
+      {
+        team: "Treasury",
+        priority: "high",
+        text: "Revise AT-1 issuance calendar; target ₹2,400 Cr raise by 31 Dec 2026 to rebuild 90bps headroom.",
+        due: "28 Apr",
+      },
+      {
+        team: "Risk",
+        priority: "high",
+        text: "Re-run 2-year ICAAP with 10% Tier-1 floor and publish to Board Risk Committee.",
+        due: "15 May",
+      },
+      {
+        team: "Capital Strategy",
+        priority: "med",
+        text: "Evaluate re-tiering of retail-NBFC arm using ₹12,500 Cr cut-off.",
+        due: "30 May",
+      },
+    ],
+    debate: [
+      {
+        who: "RK",
+        role: "Head, Risk",
+        when: "2h ago",
+        text:
+          "Leverage cap interpretation — does 'on-and-off-balance-sheet' include securitised pools we've de-recognised under Ind-AS 109? The answer matters. If it does, we're at 6.9×, not 5.8×.",
+      },
+      {
+        who: "AS",
+        role: "Treasury",
+        when: "1h ago",
+        text:
+          "Based on the Nov 2024 clarificatory FAQ, securitised pools with true-sale are excluded. But RBI could re-clarify. I'd model both scenarios.",
+        refs: 1,
+      },
+      {
+        who: "PM",
+        role: "CCO",
+        when: "12m ago",
+        text:
+          "Good catch. @AS — please include both in the ICAAP submission. I'll raise it with the Regulator at the next bilateral.",
+      },
+    ],
+  } as FeaturedAnswer,
+
+  activity: [
+    { when: "10:42", type: "circ",   text: "DOR.CAP.REC.22 indexed — Tier-1 floor raised to 10%.", impact: "high" },
+    { when: "10:18", type: "ask",    text: "Priya asked: 'Tier-1 impact of SBR revision on FY27?'" },
+    { when: "10:06", type: "save",   text: "Raghav saved an interpretation on ECB benchmark linkage." },
+    { when: "09:51", type: "learn",  text: "Team learning captured: 'PSL climate-adaptive sub-target is additive, not a carve-out.'" },
+    { when: "09:32", type: "debate", text: "Disagreement thread opened on KYC video-liveness (2 replies)." },
+    { when: "08:49", type: "circ",   text: "FED.FE.REC.09 ECB extension — deadline moved to 30 Sep." },
+    { when: "08:20", type: "ask",    text: "Vikram asked: 'Cooling-off for pre-approved digital loans?'" },
+    { when: "Yday",  type: "learn",  text: "Team learning captured: 'SBR glide-path is 3 quarters for UL, not 4.'" },
+  ] as ActivityItem[],
+
+  actionItems: [
+    { id: "ai1", title: "Revise AT-1 issuance calendar — rebuild 90bps Tier-1 headroom", team: "Treasury",   priority: "high", due: "28 Apr 2026", status: "in-progress", owner: "AS", src: "SBR Revision" },
+    { id: "ai2", title: "Re-run 2-year ICAAP with 10% Tier-1 floor",                      team: "Risk",       priority: "high", due: "15 May 2026", status: "pending",     owner: "RK", src: "SBR Revision" },
+    { id: "ai3", title: "Evaluate re-tiering of retail-NBFC arm at ₹12,500 Cr cut-off",   team: "Capital",    priority: "med",  due: "30 May 2026", status: "pending",     owner: "DK", src: "SBR Revision" },
+    { id: "ai4", title: "Brief Ops on video-KYC liveness vendor change",                  team: "Compliance", priority: "med",  due: "02 May 2026", status: "pending",     owner: "VN", src: "KYC Amendment" },
+    { id: "ai5", title: "File Q4 FY26 PSL shortfall disclosure",                          team: "Reporting",  priority: "high", due: "30 Apr 2026", status: "in-progress", owner: "PM", src: "PSL Targets" },
+    { id: "ai6", title: "Update KFS template with annualized total-cost field",           team: "Legal",      priority: "low",  due: "10 Jun 2026", status: "pending",     owner: "VN", src: "Digital Lending" },
+    { id: "ai7", title: "Transition 3 ECB contracts from LIBOR proxy to SOFR",            team: "Treasury",   priority: "med",  due: "30 Sep 2026", status: "pending",     owner: "AS", src: "ECB" },
+    { id: "ai8", title: "Confirm no RPT disclosure gaps for Q4",                          team: "Secretarial", priority: "low", due: "25 Apr 2026", status: "done",        owner: "PM", src: "RPT Framework" },
+  ] as ActionMock[],
+
+  history: [
+    { id: "q1", q: "Tier-1 impact of SBR revision on FY27?",                         when: "Today 10:14", risk: "high", conf: 0.86, teams: ["Treasury", "Risk", "Capital"] },
+    { id: "q2", q: "Can pre-approved digital loans skip the cooling-off?",           when: "Today 08:20", risk: "med",  conf: 0.72, teams: ["Retail", "Legal"] },
+    { id: "q3", q: "PSL climate-adaptive sub-target — carve-out or additive?",       when: "Yesterday",   risk: "med",  conf: 0.91, teams: ["Retail", "MSME"] },
+    { id: "q4", q: "ECB — grandfathering for contracts with LIBOR fallback?",        when: "Yesterday",   risk: "low",  conf: 0.88, teams: ["Treasury"] },
+    { id: "q5", q: "Video-KYC — does the new liveness standard apply to re-KYC?",    when: "19 Apr",      risk: "high", conf: 0.64, teams: ["Compliance", "Tech"] },
+    { id: "q6", q: "RPT — disclosure triggers for intra-group guarantees",           when: "18 Apr",      risk: "low",  conf: 0.82, teams: ["Secretarial"] },
+    { id: "q7", q: "NSFR — treatment of retail deposits under new buffers",          when: "17 Apr",      risk: "med",  conf: 0.78, teams: ["Treasury", "Risk"] },
+    { id: "q8", q: "Leverage cap — does de-recognised securitised pool count?",      when: "17 Apr",      risk: "high", conf: 0.58, teams: ["Risk", "Treasury"] },
+  ] as HistoryMock[],
+
+  learnings: [
+    { id: "l1", title: "PSL climate-adaptive sub-target is additive, not a carve-out.",                                                            by: "PM", when: "Yesterday", src: "c4", tags: ["PSL", "Agri"],      note: "Confirmed via bilateral with RBI DGBR on 19 Apr. Sub-target of 2% sits on top of the 18% agri target — not subtracted." },
+    { id: "l2", title: "SBR glide-path is 3 quarters for Upper Layer, not 4.",                                                                      by: "RK", when: "Yesterday", src: "c1", tags: ["SBR", "Tier-1"],   note: "Framework ¶4.2(c) — glide-path ends Q4 FY27, not Q1 FY28 as originally briefed." },
+    { id: "l3", title: "Video-KYC liveness standard IS extendable to re-KYC when OVD is refreshed, not at routine periodicity check.",              by: "VN", when: "18 Apr",    src: "c2", tags: ["KYC", "Video"],     note: "Narrow reading of paragraph 7.4 — trigger is 'refresh of OVD'." },
+    { id: "l4", title: "ECB fallback language alone is not sufficient — SOFR linkage must be executed via amendment.",                              by: "AS", when: "17 Apr",    src: "c3", tags: ["ECB", "FEMA"] },
+    { id: "l5", title: "RPT disclosure kicks in at 10% of net-worth OR ₹1000 Cr — whichever is lower. Lower bound bites first.",                     by: "PM", when: "15 Apr",    src: "c7", tags: ["RPT", "Governance"] },
+    { id: "l6", title: "LCR HQLA Level 1 — SDLs with residual maturity < 1yr get full weight; > 1yr get 85%.",                                       by: "RK", when: "12 Apr",    src: "c6", tags: ["LCR", "HQLA"] },
+  ] as LearningMock[],
+
+  saved: [
+    { id: "s1", title: "SBR Tier-1 impact — briefing note",        q: "Tier-1 impact of SBR revision on FY27?",                when: "Today 10:16", tags: ["SBR", "Board-deck"] },
+    { id: "s2", title: "PSL climate-adaptive — interpretation",    q: "PSL climate-adaptive sub-target — carve-out?",          when: "Yesterday",   tags: ["PSL"] },
+    { id: "s3", title: "ECB fallback — action plan",                q: "ECB — grandfathering for contracts with LIBOR fallback?", when: "Yesterday", tags: ["ECB", "Treasury"] },
+    { id: "s4", title: "Video-KYC — re-KYC scope note",            q: "Video-KYC — does the new standard apply to re-KYC?",   when: "19 Apr",       tags: ["KYC"] },
+  ] as SavedMock[],
+};

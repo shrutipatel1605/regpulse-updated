@@ -1,0 +1,55 @@
+[project]
+name = "regpulse"
+version = "0.1.0"
+description = "RBI Regulatory Intelligence Platform"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "S",    # flake8-bandit (security)
+    "T20",  # flake8-print
+]
+ignore = [
+    "S101",  # assert used (ok in tests)
+    "B008",  # FastAPI Depends() pattern in function defaults
+]
+
+[tool.ruff.lint.per-file-ignores]
+"backend/tests/conftest.py" = ["E402"]
+"backend/scripts/*" = ["T201"]                   # print ok in CLI scripts
+"backend/tests/evals/*" = ["T201"]               # print ok in eval harness
+"backend/app/services/kg_service.py" = ["S608"]  # dynamic WHERE clauses from internal data
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.mypy.overrides]
+module = ["celery.*", "redis.*", "slowapi.*", "pdfplumber.*", "pytesseract.*", "pdf2image.*", "rapidfuzz.*", "bs4.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests", "scraper/tests"]
+asyncio_mode = "auto"
+addopts = "-v --tb=short"

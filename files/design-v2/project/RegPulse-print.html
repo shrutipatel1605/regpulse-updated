@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>RegPulse — Print</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+  html, body { height: auto; background: #ccc; }
+  body { font-family: var(--font-sans); padding: 20px 0; }
+
+  .sheet {
+    width: 1400px;
+    min-height: 900px;
+    margin: 0 auto 30px;
+    background: var(--bg);
+    box-shadow: 0 2px 12px rgba(0,0,0,.15);
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    break-after: page;
+    overflow: hidden;
+  }
+  .sheet:last-child { page-break-after: auto; break-after: auto; }
+
+  .sheet-label {
+    padding: 8px 20px;
+    background: var(--ink);
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    display: flex;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .sheet-body { flex: 1; padding: 24px; overflow: hidden; }
+
+  h1.page-h1 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  p.page-dek {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-3);
+    margin-bottom: 18px;
+  }
+
+  @media print {
+    @page {
+      size: 1500px 1050px;
+      margin: 0;
+    }
+    html, body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      background: white;
+    }
+    body { padding: 0; }
+    .sheet {
+      width: 100%;
+      margin: 0;
+      box-shadow: none;
+      page-break-after: always;
+      break-after: page;
+    }
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data/mock.js"></script>
+<script type="text/babel" src="src/primitives.jsx"></script>
+<script type="text/babel" src="src/shell.jsx"></script>
+<script type="text/babel" src="src/dashboard.jsx"></script>
+<script type="text/babel" src="src/ask.jsx"></script>
+<script type="text/babel" src="src/pages.jsx"></script>
+
+<script type="text/babel">
+  const PAGES = [
+    { id: "dashboard", label: "01 · DASHBOARD",               Comp: Dashboard },
+    { id: "ask",       label: "02 · ASK — EDITORIAL BRIEF",  Comp: Ask },
+    { id: "updates",   label: "03 · UPDATES",                Comp: Updates },
+    { id: "library",   label: "04 · CIRCULAR LIBRARY",       Comp: Library },
+    { id: "actions",   label: "05 · ACTION ITEMS",           Comp: ActionItems },
+    { id: "history",   label: "06 · HISTORY",                Comp: History },
+    { id: "learnings", label: "07 · TEAM LEARNINGS",         Comp: Learnings },
+    { id: "debate",    label: "08 · DEBATES",                Comp: Debate },
+    { id: "saved",     label: "09 · SAVED",                  Comp: Saved },
+    { id: "upgrade",   label: "10 · UPGRADE",                Comp: Upgrade },
+    { id: "account",   label: "11 · ACCOUNT",                Comp: Account },
+    { id: "admin",     label: "12 · ADMIN",                  Comp: Admin },
+  ];
+
+  const noop = () => {};
+
+  function Sheet({ label, Comp }) {
+    return (
+      <div className="sheet">
+        <div className="sheet-label">
+          <span>REGPULSE · TERMINAL v2.0</span>
+          <span>{label}</span>
+          <span>{RP_DATA.market.asOf}</span>
+        </div>
+        <TopBar onToggleTheme={noop} theme="light" onRoute={noop} />
+        <Ticker />
+        <div style={{ display:"flex", flex:1, minHeight: 800 }}>
+          <Sidebar current={label.split("·")[1].trim().toLowerCase().split(" ")[0]} onRoute={noop} />
+          <main style={{ flex:1, overflow: "hidden" }}>
+            <div style={{ height: "100%" }}>
+              <Comp onRoute={noop} />
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  function PrintApp() {
+    return (
+      <ToastProvider>
+        {PAGES.map(p => <Sheet key={p.id} label={p.label} Comp={p.Comp} />)}
+      </ToastProvider>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<PrintApp />);
+
+  (async () => {
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch(_) {}
+    await new Promise(r => setTimeout(r, 1500));
+    window.print();
+  })();
+</script>
+</body>
+</html>

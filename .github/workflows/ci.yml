@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install ruff black
+      - name: Ruff lint
+        run: ruff check backend/
+      - name: Black check
+        run: black --check --line-length 100 backend/
+
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install pytest pytest-asyncio aiosqlite fakeredis httpx cryptography
+      - name: Run tests
+        env:
+          DATABASE_URL: "sqlite+aiosqlite:///:memory:"
+          REDIS_URL: "redis://localhost:6379/0"
+          JWT_PRIVATE_KEY: "test"
+          JWT_PUBLIC_KEY: "test"
+          OPENAI_API_KEY: "test"
+          ANTHROPIC_API_KEY: "test"
+          RAZORPAY_KEY_ID: "test"
+          RAZORPAY_KEY_SECRET: "test"
+          RAZORPAY_WEBHOOK_SECRET: "test"
+          SMTP_HOST: "localhost"
+          SMTP_PORT: "587"
+          SMTP_USER: "test"
+          SMTP_PASS: "test"
+          SMTP_FROM: "test@test.com"
+          FRONTEND_URL: "http://localhost:3000"
+        run: |
+          PYTHONPATH=backend pytest backend/tests/unit/ -v
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+      - name: Type check
+        working-directory: frontend
+        run: npx tsc --noEmit
+      - name: ESLint
+        working-directory: frontend
+        run: npx next lint
+      - name: Build
+        working-directory: frontend
+        run: npx next build

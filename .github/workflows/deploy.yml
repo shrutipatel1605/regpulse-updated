@@ -1,0 +1,58 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+      - name: Build and push backend image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/regpulse
+        run: |
+          docker build -t $REGISTRY/backend:$IMAGE_TAG backend/
+          docker push $REGISTRY/backend:$IMAGE_TAG
+
+      - name: Build and push frontend image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/regpulse
+        run: |
+          docker build -t $REGISTRY/frontend:$IMAGE_TAG frontend/
+          docker push $REGISTRY/frontend:$IMAGE_TAG
+
+      - name: Deploy backend to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: regpulse-backend
+          region: asia-south1
+          image: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/regpulse/backend:${{ github.sha }}
+
+      - name: Deploy frontend to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: regpulse-frontend
+          region: asia-south1
+          image: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/regpulse/frontend:${{ github.sha }}

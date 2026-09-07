@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RegPulse — Enhanced Design Mockup v2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A6B;--navy-light:#E8F0FB;--navy-50:#f0f3f9;
+  --teal:#0D7A6E;--teal-bg:#E0F2F0;
+  --amber:#C8880A;--amber-bg:#fef3c7;--amber-text:#92400e;
+  --green:#22c55e;--green-bg:#dcfce7;--green-text:#166534;
+  --red:#dc2626;--red-bg:#fee2e2;--red-text:#991b1b;
+  --orange-bg:#fff7ed;--orange-border:#fed7aa;--orange-text:#9a3412;
+  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--border-light:#f1f5f9;
+  --text:#0f172a;--text-secondary:#64748b;--text-muted:#94a3b8;
+  --radius:12px;--radius-md:8px;--radius-sm:6px;--radius-pill:20px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);--shadow-md:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--mono:'SF Mono',SFMono-Regular,Consolas,'Liberation Mono',monospace;
+  --transition:all .2s ease;
+}
+body{font-family:var(--font);background:#f1f5f9;color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* === LAYOUT === */
+.mockup-container{max-width:960px;margin:0 auto;padding:32px 20px}
+.mockup-header{text-align:center;margin-bottom:48px}
+.mockup-header h1{font-size:28px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.mockup-header p{font-size:14px;color:var(--text-secondary)}
+
+.screen-section{margin-bottom:56px}
+.screen-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.screen-number{background:var(--navy);color:#fff;font-size:11px;font-weight:600;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.screen-title{font-size:14px;font-weight:600;color:var(--text)}
+.screen-subtitle{font-size:12px;color:var(--text-secondary);margin-left:auto}
+.enhancement-tag{background:var(--green-bg);color:var(--green-text);font-size:10px;font-weight:500;padding:2px 8px;border-radius:var(--radius-pill);margin-left:8px}
+.frame{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-md)}
+.annotation{background:var(--amber-bg);border:1px dashed var(--amber);border-radius:var(--radius-sm);padding:8px 12px;font-size:11px;color:var(--amber-text);margin-top:12px;line-height:1.5}
+.annotation strong{font-weight:600}
+.annotation-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+
+/* === TOPBAR === */
+.topbar{background:var(--navy);padding:0 20px;height:48px;display:flex;align-items:center;justify-content:space-between}
+.topbar-logo{color:#fff;font-weight:600;font-size:15px;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+.topbar-logo .logo-icon{width:22px;height:22px;background:rgba(255,255,255,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.topbar-nav{display:flex;gap:4px;align-items:center}
+.topbar-nav a{color:rgba(255,255,255,.55);font-size:13px;text-decoration:none;padding:6px 12px;border-radius:var(--radius-sm);transition:var(--transition)}
+.topbar-nav a:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.08)}
+.topbar-nav a.active{color:#fff;background:rgba(255,255,255,.12);font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.credit-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius-pill);padding:4px 12px;font-size:12px;color:#fff;display:flex;align-items:center;gap:6px;transition:var(--transition)}
+.credit-badge:hover{background:rgba(255,255,255,.15)}
+.credit-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.credit-dot.amber{background:#fbbf24}
+.credit-dot.red{background:#f87171}
+.avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;cursor:pointer;transition:var(--transition)}
+.avatar:hover{background:rgba(255,255,255,.25)}
+
+/* === SHARED === */
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--radius-pill);font-size:10px;font-weight:500;white-space:nowrap}
+.pill-blue{background:var(--navy-light);color:var(--navy)}
+.pill-teal{background:var(--teal-bg);color:var(--teal)}
+.pill-green{background:var(--green-bg);color:var(--green-text)}
+.pill-red{background:var(--red-bg);color:var(--red-text)}
+.pill-amber{background:var(--amber-bg);color:var(--amber-text)}
+.pill-gray{background:var(--border-light);color:var(--text-secondary)}
+
+.btn{padding:8px 16px;border-radius:var(--radius-md);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:var(--transition);display:inline-flex;align-items:center;gap:6px}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:#152e56}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:#0a6358}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{background:var(--bg)}
+.btn-sm{padding:5px 12px;font-size:11px}
+.btn-full{width:100%;justify-content:center;padding:10px}
+.btn-ghost{background:transparent;border:none;color:var(--text-secondary);padding:6px 10px}.btn-ghost:hover{color:var(--text);background:var(--bg)}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;transition:var(--transition)}
+.card:hover{border-color:#cbd5e1}
+.section-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+
+/* === INPUTS === */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:5px}
+.field label .required{color:var(--red)}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 12px;font-size:13px;font-family:var(--font);color:var(--text);background:var(--card);transition:var(--transition);outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.1)}
+.field input.valid{border-color:var(--green)}
+.field input.error{border-color:var(--red)}
+.field .hint{font-size:11px;margin-top:4px;color:var(--text-muted)}
+.field .hint.success{color:var(--green-text)}
+.field .hint.error{color:var(--red)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* === STEP INDICATOR === */
+.steps{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.step-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted)}
+.step-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border:2px solid var(--border);color:var(--text-muted);transition:var(--transition)}
+.step-item.done .step-dot{background:var(--navy);border-color:var(--navy);color:#fff}
+.step-item.active .step-dot{background:var(--teal);border-color:var(--teal);color:#fff}
+.step-item.active{color:var(--teal);font-weight:500}
+.step-item.done{color:var(--navy)}
+.step-line{flex:1;height:2px;background:var(--border);border-radius:1px}
+.step-line.done{background:var(--navy)}
+
+/* === STATS === */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px}
+.stat-label{font-size:11px;color:var(--text-muted);margin-bottom:4px}
+.stat-val{font-size:22px;font-weight:600;color:var(--text)}
+.stat-trend{font-size:11px;color:var(--green-text);margin-top:3px;display:flex;align-items:center;gap:3px}
+.stat-trend.down{color:var(--red)}
+.stat-trend.neutral{color:var(--text-muted)}
+
+/* === TABLES === */
+.table-compact{width:100%;border-collapse:collapse;font-size:12px}
+.table-compact th{color:var(--text-muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.table-compact td{padding:8px;border-bottom:1px solid var(--border-light);color:var(--text);vertical-align:middle}
+.table-compact tr:last-child td{border-bottom:none}
+.table-compact tr:hover td{background:var(--bg)}
+
+/* === ALERT BANNER === */
+.alert-banner{border-radius:var(--radius-md);padding:12px 16px;font-size:12px;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.alert-banner.warning{background:var(--orange-bg);border:1px solid var(--orange-border);color:var(--orange-text)}
+.alert-banner.success{background:var(--green-bg);border:1px solid #86efac;color:var(--green-text)}
+.alert-banner .alert-icon{font-size:16px;flex-shrink:0}
+.alert-banner a{color:var(--navy);font-weight:500;text-decoration:none}
+.alert-banner a:hover{text-decoration:underline}
+
+/* === Q&A === */
+.q-input-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;transition:var(--transition)}
+.q-input-card:focus-within{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.08)}
+.q-textarea{width:100%;border:none;outline:none;font-size:13px;font-family:var(--font);resize:none;color:var(--text);background:transparent;min-height:80px;line-height:1.6}
+.q-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border-light);margin-top:8px}
+.q-counter{font-size:11px;color:var(--text-muted)}
+.q-counter.warning{color:var(--amber)}
+.q-counter.danger{color:var(--red)}
+
+.answer-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;margin-bottom:12px}
+.answer-header{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border-light);background:var(--bg)}
+.answer-icon{width:22px;height:22px;border-radius:50%;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.answer-icon svg{width:12px;height:12px}
+.answer-label{font-size:12px;font-weight:500;color:var(--text)}
+.answer-body{padding:16px;font-size:13px;line-height:1.7;color:var(--text)}
+.answer-body strong{font-weight:600;color:var(--navy)}
+
+/* Streaming indicator */
+.streaming{display:flex;align-items:center;gap:8px;padding:16px;font-size:12px;color:var(--teal)}
+.streaming-dots{display:flex;gap:3px}
+.streaming-dots span{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 1.4s infinite ease-in-out}
+.streaming-dots span:nth-child(2){animation-delay:.2s}
+.streaming-dots span:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* Risk badge */
+.risk-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--radius-sm);font-size:11px;font-weight:600}
+.risk-high{background:var(--red-bg);color:var(--red-text)}
+.risk-medium{background:var(--amber-bg);color:var(--amber-text)}
+.risk-low{background:var(--green-bg);color:var(--green-text)}
+
+/* Citations */
+.citations-section{padding:16px;border-top:1px solid var(--border-light)}
+.citation-card{border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px;transition:var(--transition)}
+.citation-card:hover{border-color:#cbd5e1;background:var(--bg)}
+.citation-card:last-child{margin-bottom:0}
+.cite-num{font-size:11px;font-weight:600;color:var(--navy);font-family:var(--mono);background:var(--navy-light);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.cite-info{flex:1;min-width:0}
+.cite-title{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cite-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+.cite-link{font-size:11px;color:var(--teal);white-space:nowrap;text-decoration:none;font-weight:500}
+.cite-link:hover{text-decoration:underline}
+
+/* Feedback */
+.feedback-section{padding:14px 16px;border-top:1px solid var(--border-light);display:flex;align-items:center;gap:10px}
+.fb-label{font-size:12px;color:var(--text-secondary);flex:1}
+.fb-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:var(--transition)}
+.fb-btn:hover{background:var(--bg);border-color:#cbd5e1}
+.fb-btn.active-up{background:var(--green-bg);border-color:#86efac}
+.fb-btn.active-down{background:var(--red-bg);border-color:#fca5a5}
+.fb-comment{margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light)}
+.fb-comment textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;font-size:12px;font-family:var(--font);resize:none;min-height:60px;color:var(--text);outline:none}
+.fb-comment textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.08)}
+.fb-comment-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
+
+/* Actions section */
+.actions-section{padding:16px;border-top:1px solid var(--border-light);background:var(--bg)}
+.action-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-light);font-size:12px}
+.action-item:last-child{border-bottom:none}
+.action-team{font-weight:500;color:var(--navy);min-width:90px;flex-shrink:0}
+.action-text{color:var(--text);flex:1;line-height:1.5}
+
+/* Follow-up */
+.followup-section{padding:14px 16px;border-top:1px solid var(--border-light);background:var(--navy-50)}
+.followup-label{font-size:11px;font-weight:500;color:var(--text-muted);margin-bottom:6px}
+.followup-suggestions{display:flex;gap:6px;flex-wrap:wrap}
+.followup-chip{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-pill);padding:5px 12px;font-size:11px;color:var(--text-secondary);cursor:pointer;transition:var(--transition)}
+.followup-chip:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-light)}
+
+/* === LIBRARY === */
+.main-layout{display:flex}
+.sidebar{width:220px;min-height:400px;border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;background:var(--card)}
+.sidebar-section{padding:10px 16px}
+.sidebar-section-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.sidebar-check{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);padding:3px 0;cursor:pointer}
+.sidebar-check input{width:14px;height:14px;accent-color:var(--navy)}
+.content{flex:1;padding:20px;background:var(--bg)}
+.lib-header{display:flex;gap:10px;margin-bottom:14px}
+.search-input{flex:1;border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;font-size:13px;color:var(--text);background:var(--card);outline:none;transition:var(--transition)}
+.search-input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.08)}
+.search-input::placeholder{color:var(--text-muted)}
+.circ-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.circ-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;cursor:pointer;transition:var(--transition)}
+.circ-card:hover{border-color:#94a3b8;box-shadow:var(--shadow-sm)}
+.circ-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.circ-num{font-size:10px;font-family:var(--mono);color:var(--navy);font-weight:500}
+.circ-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+.circ-meta{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+
+/* === OTP === */
+.otp-container{display:flex;justify-content:center;gap:10px;margin:24px 0}
+.otp-box{width:48px;height:56px;border:2px solid var(--border);border-radius:var(--radius-md);text-align:center;font-size:22px;font-weight:600;color:var(--navy);outline:none;transition:var(--transition);font-family:var(--mono)}
+.otp-box:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.12)}
+.otp-box.filled{border-color:var(--navy);background:var(--navy-50)}
+.otp-timer{text-align:center;font-size:12px;color:var(--text-muted);margin-bottom:20px}
+.otp-timer strong{color:var(--teal);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* === UPGRADE === */
+.plan-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:0 20px 20px}
+.plan-card{border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;position:relative;transition:var(--transition)}
+.plan-card:hover{border-color:#94a3b8}
+.plan-card.featured{border:2px solid var(--navy);box-shadow:var(--shadow-md)}
+.plan-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.plan-price{font-size:28px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.plan-price sub{font-size:13px;font-weight:400;color:var(--text-muted)}
+.plan-desc{font-size:12px;color:var(--text-muted);margin-bottom:16px}
+.plan-features{text-align:left;margin-bottom:16px}
+.plan-feature{font-size:12px;color:var(--text-secondary);padding:5px 0;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:6px}
+.plan-feature::before{content:"";width:16px;height:16px;background:var(--green-bg);border-radius:50%;flex-shrink:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 8l2 2 4-4' stroke='%2322c55e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
+.popular-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;font-weight:600;padding:3px 12px;border-radius:var(--radius-pill)}
+
+/* === ADMIN === */
+.topbar-admin{background:#1e293b}
+.admin-badge{background:rgba(255,255,255,.12);font-size:10px;padding:2px 8px;border-radius:var(--radius-pill);color:rgba(255,255,255,.7)}
+.sidebar-admin{background:#f8fafc}
+.nav-item{padding:9px 16px;font-size:13px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:9px;border-left:2px solid transparent;transition:var(--transition)}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{color:var(--navy);border-left-color:var(--navy);background:var(--navy-light);font-weight:500}
+.nav-item svg{width:15px;height:15px;opacity:.5;flex-shrink:0}
+.nav-item.active svg{opacity:1}
+.badge-count{background:var(--red);color:#fff;font-size:10px;font-weight:600;border-radius:var(--radius-pill);padding:1px 7px;margin-left:auto}
+.scraper-status{background:var(--green-bg);border-radius:var(--radius-md);padding:10px 12px;font-size:11px;color:var(--green-text);margin:12px 16px}
+.review-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:10px}
+.review-q{font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.5}
+.review-a{font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px;padding-left:10px;border-left:2px solid var(--border)}
+.review-comment{font-size:11px;color:var(--orange-text);background:var(--orange-bg);padding:6px 10px;border-radius:var(--radius-sm);margin-bottom:10px;line-height:1.5}
+.override-area{width:100%;border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;font-size:12px;font-family:var(--font);color:var(--text);background:var(--bg);min-height:60px;resize:none;margin-bottom:8px;outline:none}
+.override-area:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.08)}
+</style>
+</head>
+<body>
+<div class="mockup-container">
+
+<div class="mockup-header">
+  <h1>RegPulse — Enhanced Design System v2</h1>
+  <p>UI/UX Audit Recommendations — Visual Design Artifact</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 1: ENHANCED REGISTRATION (3-step wizard) -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">1</div>
+    <div class="screen-title">Registration — Step 2: Profile</div>
+    <span class="enhancement-tag">Enhanced</span>
+    <div class="screen-subtitle">3-step wizard with inline validation</div>
+  </div>
+  <div class="frame">
+    <div class="topbar">
+      <span class="topbar-logo"><span class="logo-icon">R</span> RegPulse</span>
+      <div style="color:rgba(255,255,255,.5);font-size:13px">Already have an account? <a href="#" style="color:#fff;text-decoration:none;font-weight:500">Sign in</a></div>
+    </div>
+    <div style="background:var(--bg);padding:32px 0;min-height:400px">
+      <div style="max-width:480px;margin:0 auto;padding:0 24px">
+        <!-- Step indicator -->
+        <div class="steps">
+          <div class="step-item done"><div class="step-dot">&#10003;</div> Email</div>
+          <div class="step-line done"></div>
+          <div class="step-item active"><div class="step-dot">2</div> Profile</div>
+          <div class="step-line"></div>
+          <div class="step-item"><div class="step-dot">3</div> Verify</div>
+        </div>
+
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <h2 style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px">Create your account</h2>
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">Use your work email to get <strong>5 free questions</strong>. Personal email addresses are not accepted.</p>
+
+          <!-- Email with inline validation -->
+          <div class="field">
+            <label>Work email <span class="required">*</span></label>
+            <input type="email" value="priya.menon@axisbank.com" class="valid" style="padding-right:36px">
+            <div class="hint success">&#10003; Valid work email — Axis Bank</div>
+          </div>
+
+          <!-- 2-column name row -->
+          <div class="field-row">
+            <div class="field">
+              <label>Full name <span class="required">*</span></label>
+              <input type="text" value="Priya Menon">
+            </div>
+            <div class="field">
+              <label>Designation</label>
+              <input type="text" value="Chief Compliance Officer">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Organisation</label>
+            <input type="text" value="Axis Bank Ltd.">
+          </div>
+
+          <div class="field">
+            <label>Organisation type</label>
+            <select>
+              <option>Select type...</option>
+              <option selected>Private Sector Bank</option>
+              <option>NBFC</option>
+              <option>Fintech</option>
+              <option>Cooperative Bank</option>
+            </select>
+          </div>
+
+          <button class="btn btn-navy btn-full" style="margin-top:4px">Continue to verification &rarr;</button>
+
+          <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px">By registering you agree to our <a href="#" style="color:var(--navy)">Terms of Service</a> and <a href="#" style="color:var(--navy)">Privacy Policy</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation"><strong>Enhancements vs current build:</strong> 3-step progress indicator gives journey context. Inline email validation with green checkmark and org name detection. 2-column name/designation layout saves vertical space. Explicit value prop in subtitle ("5 free questions"). Legal footer for compliance. "Continue to verification →" CTA with directional cue. Border-based cards (no drop shadows).</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 2: OTP VERIFICATION (with timer + resend) -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">2</div>
+    <div class="screen-title">OTP Verification</div>
+    <span class="enhancement-tag">Enhanced</span>
+    <div class="screen-subtitle">Expiry timer + resend button</div>
+  </div>
+  <div class="frame">
+    <div class="topbar">
+      <span class="topbar-logo"><span class="logo-icon">R</span> RegPulse</span>
+      <div></div>
+    </div>
+    <div style="background:var(--bg);padding:40px 0;min-height:340px">
+      <div style="max-width:400px;margin:0 auto;padding:0 24px;text-align:center">
+        <div class="steps" style="justify-content:center;margin-bottom:24px">
+          <div class="step-item done"><div class="step-dot">&#10003;</div></div>
+          <div class="step-line done" style="max-width:60px"></div>
+          <div class="step-item done"><div class="step-dot">&#10003;</div></div>
+          <div class="step-line done" style="max-width:60px"></div>
+          <div class="step-item active"><div class="step-dot">3</div></div>
+        </div>
+
+        <h2 style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Enter verification code</h2>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">We sent a 6-digit code to</p>
+        <p style="font-size:13px;color:var(--text);font-weight:500;margin-bottom:24px">p****@<strong>axisbank.com</strong></p>
+
+        <!-- OTP input boxes -->
+        <div class="otp-container">
+          <input class="otp-box filled" value="4" maxlength="1">
+          <input class="otp-box filled" value="7" maxlength="1">
+          <input class="otp-box filled" value="2" maxlength="1">
+          <input class="otp-box" value="" maxlength="1" style="border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.12)">
+          <input class="otp-box" value="" maxlength="1">
+          <input class="otp-box" value="" maxlength="1">
+        </div>
+
+        <!-- Timer -->
+        <div class="otp-timer">Code expires in <strong>8:42</strong></div>
+
+        <button class="btn btn-navy btn-full" style="opacity:.5;cursor:not-allowed">Verify OTP</button>
+
+        <div style="margin-top:16px;display:flex;justify-content:center;gap:16px;font-size:12px">
+          <a href="#" style="color:var(--text-muted);text-decoration:none">Didn't receive it? <span style="color:var(--navy);font-weight:500">Resend code</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation"><strong>Enhancements:</strong> OTP expiry countdown timer (8:42 remaining) — users know code validity window. Dedicated "Resend code" button (rate-limited to 3/hour). Bold domain in masked email for scannability. Step 3 of 3 progress shown. Button disabled until 6 digits entered. Individual digit boxes with auto-advance, paste support, auto-submit on 6th digit.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 3: ENHANCED DASHBOARD -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">3</div>
+    <div class="screen-title">Dashboard — Authenticated Home</div>
+    <span class="enhancement-tag">Enhanced</span>
+    <div class="screen-subtitle">Personalized greeting, stat cards, alerts</div>
+  </div>
+  <div class="frame">
+    <div class="topbar">
+      <span class="topbar-logo"><span class="logo-icon">R</span> RegPulse</span>
+      <div class="topbar-nav">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Library</a>
+        <a href="#">Ask</a>
+        <a href="#">History</a>
+      </div>
+      <div class="topbar-right">
+        <div class="credit-badge"><div class="credit-dot amber"></div>2 left</div>
+        <div class="avatar">PM</div>
+      </div>
+    </div>
+    <div style="padding:20px;background:var(--bg)">
+      <!-- Greeting -->
+      <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:14px">Good morning, Priya</div>
+
+      <!-- Low credits alert -->
+      <div class="alert-banner warning">
+        <span class="alert-icon">&#9888;</span>
+        <span>You have <strong>2 questions remaining</strong> on your free plan. <a href="#">Upgrade to Professional &rarr;</a></span>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Questions used</div>
+          <div class="stat-val">3</div>
+          <div class="stat-trend neutral">of 5 free</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Circulars indexed</div>
+          <div class="stat-val">2,847</div>
+          <div class="stat-trend">&#8593; +12 today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Latest circular</div>
+          <div class="stat-val" style="font-size:13px;font-family:var(--mono)">RBI/2025-26/41</div>
+          <div class="stat-trend neutral">2 hours ago</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Your plan</div>
+          <div class="stat-val" style="font-size:15px">Free</div>
+          <div class="stat-trend"><a href="#" style="color:var(--navy);text-decoration:none;font-weight:500">Upgrade &rarr;</a></div>
+        </div>
+      </div>
+
+      <!-- Content grid -->
+      <div style="display:grid;grid-template-columns:5fr 3fr;gap:12px">
+        <!-- Recent questions -->
+        <div class="card">
+          <div class="section-label">Recent questions</div>
+          <table class="table-compact">
+            <thead><tr><th>Question</th><th>When</th><th>Feedback</th></tr></thead>
+            <tbody>
+              <tr><td>What are the LTV ratios for gold loans under RBI guidelines?</td><td style="white-space:nowrap">2h ago</td><td><span class="pill pill-green">&#128077;</span></td></tr>
+              <tr><td>KYC norms for video-based customer identification (V-CIP)?</td><td style="white-space:nowrap">Yesterday</td><td><span class="pill pill-green">&#128077;</span></td></tr>
+              <tr><td>Digital lending circular — first loss default guarantee limits</td><td style="white-space:nowrap">2 days ago</td><td><span class="pill pill-red">&#128078;</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- New circulars feed -->
+        <div class="card">
+          <div class="section-label">New circulars</div>
+          <div style="padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--border-light)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px">Digital Lending — Updated FPC norms</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px"><span style="font-family:var(--mono);color:var(--navy)">RBI/2025-26/41</span> &middot; DOR &middot; 2h ago</div>
+            <span class="pill pill-blue">Circular</span> <span class="risk-badge risk-high" style="font-size:9px;padding:1px 6px">HIGH</span>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px">Master Direction — KYC (Amendment)</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px"><span style="font-family:var(--mono);color:var(--navy)">MD/KYC/2025</span> &middot; DPSS &middot; Yesterday</div>
+            <span class="pill pill-teal">Master Direction</span> <span class="risk-badge risk-medium" style="font-size:9px;padding:1px 6px">MEDIUM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation"><strong>Enhancements:</strong> Personalized time-of-day greeting. Low-credits amber banner with upgrade CTA (only shown when credits &lt; 3). Impact level badges (HIGH/MEDIUM/LOW) on new circulars. Monospace circular numbers for regulatory readability. Hover states on table rows. Avatar with initials in topbar. Stat cards with trend indicators.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 4: ENHANCED Q&A — The Core Product Surface -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">4</div>
+    <div class="screen-title">Ask a Question — Full Answer Experience</div>
+    <span class="enhancement-tag">Enhanced</span>
+    <div class="screen-subtitle">Structured answer, citations, feedback with comment, follow-ups</div>
+  </div>
+  <div class="frame">
+    <div class="topbar">
+      <span class="topbar-logo"><span class="logo-icon">R</span> RegPulse</span>
+      <div class="topbar-nav">
+        <a href="#">Dashboard</a><a href="#">Library</a><a href="#" class="active">Ask</a><a href="#">History</a>
+      </div>
+      <div class="topbar-right">
+        <div class="credit-badge"><div class="credit-dot red"></div>1 left</div>
+        <div class="avatar">PM</div>
+      </div>
+    </div>
+    <div style="padding:20px;background:var(--bg)">
+      <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px">Ask a question</div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Answers grounded in RBI's indexed circular corpus — every answer includes source citations.</p>
+
+      <!-- Question input -->
+      <div class="q-input-card">
+        <textarea class="q-textarea" placeholder="Ask about any RBI circular, Master Direction, or regulatory topic...">What are the revised guidelines on minimum net owned funds (NOF) requirements for NBFCs under the October 2021 scale-based regulation? Do the limits differ by NBFC category?</textarea>
+        <div class="q-footer">
+          <span class="q-counter warning">442 / 500</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="pill pill-amber" style="font-size:10px">1 credit</span>
+            <button class="btn btn-navy btn-sm">Ask question</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Answer card -->
+      <div class="answer-card">
+        <!-- Header -->
+        <div class="answer-header">
+          <div class="answer-icon">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z" stroke="#0D7A6E" stroke-width="1.5"/><path d="M8 7v4M8 5h.01" stroke="#0D7A6E" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <span class="answer-label">Answer</span>
+          <span class="risk-badge risk-medium" style="margin-left:auto">MEDIUM risk</span>
+          <span class="pill pill-teal">Instant answer</span>
+          <button class="btn-ghost" title="Save interpretation" style="font-size:16px;padding:4px 6px">&#9734;</button>
+        </div>
+
+        <!-- Answer body -->
+        <div class="answer-body">
+          Under the RBI's <strong>Scale-Based Regulation (SBR) framework</strong> for NBFCs (effective October 22, 2021), the minimum Net Owned Fund (NOF) requirements are tiered by layer classification:
+          <br><br>
+          <strong>NBFC-Base Layer (BL):</strong> minimum NOF of &#8377;2 crore (for new entrants from 2022 onwards; existing NBFCs granted transition until March 2027).
+          <br><br>
+          <strong>NBFC-Middle Layer (ML) and Upper Layer (UL):</strong> minimum NOF of &#8377;10 crore. Investment and Credit Companies (ICC) and Microfinance Institutions (MFI) within the Base Layer also require &#8377;2 crore.
+          <br><br>
+          <strong>Infrastructure Finance Companies (IFC)</strong> categorised in the Middle Layer must maintain a minimum of &#8377;300 crore.
+        </div>
+
+        <!-- Affected teams -->
+        <div style="padding:0 16px 12px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="section-label" style="margin:0;padding-top:2px">Affected teams:</span>
+          <span class="pill pill-blue">Compliance</span>
+          <span class="pill pill-blue">Risk Management</span>
+          <span class="pill pill-blue">Finance</span>
+        </div>
+
+        <!-- Citations -->
+        <div class="citations-section">
+          <div class="section-label">Regulatory sources</div>
+          <div class="citation-card">
+            <div class="cite-num">RBI/2021-22/112</div>
+            <div class="cite-info">
+              <div class="cite-title">Scale Based Regulation (SBR): A Revised Regulatory Framework for NBFCs</div>
+              <div class="cite-meta">DOR &middot; Oct 22, 2021</div>
+            </div>
+            <a href="#" class="cite-link">rbi.org.in &#8599;</a>
+          </div>
+          <div class="citation-card">
+            <div class="cite-num">RBI/2022-23/66</div>
+            <div class="cite-info">
+              <div class="cite-title">Scale Based Regulation — Clarification on NOF and Transition Timeline</div>
+              <div class="cite-meta">DOR &middot; Jul 14, 2022</div>
+            </div>
+            <a href="#" class="cite-link">rbi.org.in &#8599;</a>
+          </div>
+        </div>
+
+        <!-- Recommended actions -->
+        <div class="actions-section">
+          <div class="section-label">Recommended actions</div>
+          <div class="action-item">
+            <span class="action-team">Compliance</span>
+            <span class="action-text">Review current NOF levels against the SBR tier thresholds and prepare a gap analysis report</span>
+            <span class="risk-badge risk-high" style="font-size:9px;padding:1px 6px;flex-shrink:0">HIGH</span>
+          </div>
+          <div class="action-item">
+            <span class="action-team">Finance</span>
+            <span class="action-text">Model capital infusion scenarios if NOF falls below the tier-appropriate minimum by the transition deadline</span>
+            <span class="risk-badge risk-medium" style="font-size:9px;padding:1px 6px;flex-shrink:0">MEDIUM</span>
+          </div>
+        </div>
+
+        <!-- Feedback with expanded comment -->
+        <div class="feedback-section">
+          <span class="fb-label">Was this answer helpful?</span>
+          <div class="fb-btn active-up">&#128077;</div>
+          <div class="fb-btn">&#128078;</div>
+        </div>
+
+        <!-- Follow-up suggestions -->
+        <div class="followup-section">
+          <div class="followup-label">Ask a follow-up</div>
+          <div class="followup-suggestions">
+            <div class="followup-chip">What is the transition timeline for existing NBFCs?</div>
+            <div class="followup-chip">Does this apply to NBFC-MFIs specifically?</div>
+            <div class="followup-chip">What penalties for non-compliance?</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Streaming state demo -->
+      <div class="answer-card" style="opacity:.85">
+        <div class="answer-header">
+          <div class="answer-icon">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z" stroke="#0D7A6E" stroke-width="1.5"/><path d="M8 7v4M8 5h.01" stroke="#0D7A6E" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <span class="answer-label">Answer</span>
+          <span class="pill pill-gray" style="margin-left:auto">Generating...</span>
+        </div>
+        <div class="streaming">
+          <div class="streaming-dots"><span></span><span></span><span></span></div>
+          <span>Analyzing 6 regulatory sources...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation"><strong>Major enhancements vs current (no Q&A UI exists yet):</strong> Character counter with color transitions (gray→amber→red). Credit cost indicator before asking. Structured answer with bold regulatory terms. Risk level badge (HIGH/MEDIUM/LOW). Affected teams pills. Citation cards with monospace circular numbers + rbi.org.in links. Recommended actions with team assignment and priority. Bookmark/save button. Feedback with thumbs up/down. Follow-up question suggestions for engagement loop. Streaming indicator with animated dots during SSE generation. Feedback comment expansion on thumbs-down (not shown in compact view).</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 5: THUMBS-DOWN FEEDBACK EXPANSION -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">5</div>
+    <div class="screen-title">Feedback — Thumbs Down Expansion</div>
+    <span class="enhancement-tag">New</span>
+    <div class="screen-subtitle">Engagement loop for quality improvement</div>
+  </div>
+  <div class="frame" style="max-width:600px">
+    <div style="padding:16px">
+      <div class="feedback-section" style="border:none;padding:0">
+        <span class="fb-label">Was this answer helpful?</span>
+        <div class="fb-btn">&#128077;</div>
+        <div class="fb-btn active-down">&#128078;</div>
+      </div>
+      <div class="fb-comment">
+        <textarea placeholder="What was wrong with this answer? Your feedback helps us improve...">The circular specifies 3 days explicitly for the cooling-off period — not just "board-approved". Answer is imprecise.</textarea>
+        <div class="fb-comment-actions">
+          <button class="btn btn-outline btn-sm">Cancel</button>
+          <button class="btn btn-navy btn-sm">Submit feedback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation"><strong>PM's core complaint addressed:</strong> "Q&A does not give room for feedback or engagement." Thumbs-down now expands a comment textarea. User's text feeds directly into the Admin Review Queue. This closes the quality loop: user feedback → admin review → answer override → improved future responses.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 6: ENHANCED CIRCULAR LIBRARY -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">6</div>
+    <div class="screen-title">Circular Library — Search & Filter</div>
+    <span class="enhancement-tag">Enhanced</span>
+    <div class="screen-subtitle">Sidebar filters, impact badges, hover states</div>
+  </div>
+  <div class="frame">
+    <div class="topbar">
+      <span class="topbar-logo"><span class="logo-icon">R</span> RegPulse</span>
+      <div class="topbar-nav">
+        <a href="#">Dashboard</a><a href="#" class="active">Library</a><a href="#">Ask</a><a href="#">History</a>
+      </div>
+      <div class="topbar-right">
+        <div class="credit-badge"><div class="credit-dot"></div>5 left</div>
+        <div class="avatar">PM</div>
+      </div>
+    </div>
+    <div class="main-layout">
+      <div class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Filters</div>
+        </div>
+        <div class="sidebar-section" style="border-bottom:1px solid var(--border-light)">
+          <div class="sidebar-section-title">Document type</div>
+          <label class="sidebar-check"><input type="checkbox" checked> Circular</label>
+          <label class="sidebar-check"><input type="checkbox" checked> Master Direction</label>
+          <label class="sidebar-check"><input type="checkbox"> Notification</label>
+          <label class="sidebar-check"><input type="checkbox"> Press Release</label>
+        </div>
+        <div class="sidebar-section" style="border-bottom:1px solid var(--border-light)">
+          <div class="sidebar-section-title">Status</div>
+          <label class="sidebar-check"><input type="checkbox" checked> Active only</label>
+        </div>
+        <div class="sidebar-section" style="border-bottom:1px solid var(--border-light)">
+          <div class="sidebar-section-title">Impact level</div>
+          <label class="sidebar-check"><input type="checkbox" checked> <span class="risk-badge risk-high" style="font-size:9px;padding:1px 5px">HIGH</span></label>
+          <label class="sidebar-check"><input type="checkbox" checked> <span class="risk-badge risk-medium" style="font-size:9px;padding:1px 5px">MEDIUM</span></label>
+          <label class="sidebar-check"><input type="checkbox" checked> <span class="risk-badge risk-low" style="font-size:9px;padding:1px 5px">LOW</span></label>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Department</div>
+          <select style="width:100%;font-size:12px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;color:var(--text)">
+            <option>All departments</option>
+            <option>DOR</option><option>DNBS</option><option>DPSS</option><option>FED</option>
+          </select>
+        </div>
+      </div>
+      <div class="content">
+        <div class="lib-header">
+          <input class="search-input" type="text" value="digital lending" placeholder="Search circulars...">
+          <button class="btn btn-outline btn-sm">Sort: Latest &#8595;</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px">Showing <strong>18 results</strong> for "digital lending"</div>
+        <div class="circ-grid">
+          <div class="circ-card">
+            <div class="circ-top"><span class="pill pill-blue">Circular</span><span class="circ-num">RBI/2025-26/41</span><span class="risk-badge risk-high" style="font-size:8px;padding:1px 5px;margin-left:auto">HIGH</span></div>
+            <div class="circ-title">Digital Lending — Revised Fair Practices Code and Transparency Requirements</div>
+            <div class="circ-meta">DOR &middot; Mar 12, 2025 <span class="pill pill-green" style="margin-left:4px">Active</span></div>
+          </div>
+          <div class="circ-card">
+            <div class="circ-top"><span class="pill pill-teal">Master Direction</span><span class="circ-num">MD/DL/2022</span></div>
+            <div class="circ-title">Master Direction — Digital Lending Guidelines (Consolidated)</div>
+            <div class="circ-meta">DOR &middot; Sep 2, 2022 <span class="pill pill-green" style="margin-left:4px">Active</span></div>
+          </div>
+          <div class="circ-card" style="opacity:.7">
+            <div class="circ-top"><span class="pill pill-blue">Circular</span><span class="circ-num">RBI/2022-23/98</span></div>
+            <div class="circ-title">Digital Lending — Guidelines for Regulated Entities and LSPs</div>
+            <div class="circ-meta">DOR &middot; Aug 10, 2022 <span class="pill pill-red" style="margin-left:4px">Superseded</span></div>
+          </div>
+          <div class="circ-card">
+            <div class="circ-top"><span class="pill pill-blue">Circular</span><span class="circ-num">RBI/2023-24/54</span><span class="risk-badge risk-medium" style="font-size:8px;padding:1px 5px;margin-left:auto">MED</span></div>
+            <div class="circ-title">FLDG Arrangements — Permissible Limits and Disclosure Norms</div>
+            <div class="circ-meta">DOR &middot; Sep 8, 2023 <span class="pill pill-green" style="margin-left:4px">Active</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation"><strong>Enhancements:</strong> Impact level filter in sidebar (HIGH/MEDIUM/LOW). Impact badges on cards. Superseded circulars shown with reduced opacity. Hover states on cards (border darkens). Styled checkboxes with accent color. Department dropdown filter. Search input with focus ring.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 7: ENHANCED ADMIN CONSOLE -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">7</div>
+    <div class="screen-title">Admin Console — Review Queue</div>
+    <span class="enhancement-tag">Enhanced</span>
+    <div class="screen-subtitle">Stats, review items with override, scraper status</div>
+  </div>
+  <div class="frame">
+    <div class="topbar topbar-admin">
+      <span class="topbar-logo"><span class="logo-icon">R</span> RegPulse <span class="admin-badge">Admin</span></span>
+      <div style="font-size:12px;color:rgba(255,255,255,.5)">admin@regpulse.com</div>
+    </div>
+    <div class="main-layout">
+      <div class="sidebar sidebar-admin" style="min-height:520px">
+        <div class="nav-item"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/></svg>Dashboard</div>
+        <div class="nav-item active"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14A6 6 0 108 2a6 6 0 000 12z" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5.5V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Review queue<span class="badge-count">7</span></div>
+        <div class="nav-item"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" rx="1" fill="currentColor"/><rect x="1" y="7" width="10" height="2" rx="1" fill="currentColor"/><rect x="1" y="11" width="12" height="2" rx="1" fill="currentColor"/></svg>Prompts</div>
+        <div class="nav-item"><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Circulars</div>
+        <div class="nav-item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-2.5 2.5-4 6-4s6 1.5 6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Users</div>
+        <div class="nav-item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2v4M8 10v4M2 8h4M10 8h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Scraper</div>
+        <div class="scraper-status">
+          <div style="display:flex;align-items:center;gap:5px;font-weight:500;margin-bottom:2px"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Scraper: OK</div>
+          <div>Last run: 32 min ago &middot; +12 docs</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+          <div class="stat-card"><div class="stat-label">Questions today</div><div class="stat-val">248</div><div class="stat-trend">&#8593; 18% vs yesterday</div></div>
+          <div class="stat-card"><div class="stat-label">Feedback ratio (7d)</div><div class="stat-val" style="color:var(--green-text)">84%</div><div class="stat-trend">&#8593; 2% vs last week</div></div>
+          <div class="stat-card"><div class="stat-label">Pending review</div><div class="stat-val" style="color:var(--red)">7</div><div class="stat-trend down">Needs attention</div></div>
+          <div class="stat-card"><div class="stat-label">New users (7d)</div><div class="stat-val">34</div><div class="stat-trend">3 upgrades</div></div>
+        </div>
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">Review queue — thumbs-down answers</div>
+        <div class="review-item">
+          <div class="review-q">What is the cooling period for digital loan cancellation under the digital lending guidelines?</div>
+          <div class="review-a">The RBI's digital lending guidelines specify that borrowers are entitled to a cooling-off period to exit digital loans. The exact duration is determined by the board-approved policy of the regulated entity, typically ranging from 24 to 72 hours.</div>
+          <div class="review-comment">&#128172; User: "The circular specifies 3 days explicitly — not just 'board-approved'. Answer is imprecise."</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+            <span class="pill pill-blue">RBI/2022-23/98</span>
+            <span class="pill pill-teal">DOR</span>
+            <span class="pill pill-amber">model: claude-sonnet &middot; v1.1</span>
+          </div>
+          <textarea class="override-area" placeholder="Enter corrected answer...">The RBI Digital Lending Guidelines (RBI/2022-23/211, effective Sep 2, 2022) explicitly mandate a cooling-off or look-up period of at least 3 days for digital loans with tenure of up to 7 days, and 3 days for longer-term loans, during which borrowers may prepay without penalty.</textarea>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-navy btn-sm">Save override</button>
+            <button class="btn btn-outline btn-sm">Mark reviewed (no override)</button>
+            <button class="btn-ghost btn-sm" style="margin-left:auto">Skip for now</button>
+          </div>
+        </div>
+        <div class="review-item" style="opacity:.5">
+          <div class="review-q">Is FLDG permitted for all NBFCs under scale-based regulation?</div>
+          <div class="review-a">The guidelines on FLDG arrangements apply to all regulated entities including NBFCs...</div>
+          <div class="review-comment">&#128172; User: "Didn't mention the 5% cap"</div>
+          <div><button class="btn btn-navy btn-sm">Review</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation"><strong>Enhancements:</strong> "Skip for now" option for prioritized review. User comment prefixed with speech bubble icon for scannability. Model version + prompt version metadata tags. Scraper status with green dot in sidebar footer. Stat cards with color-coded values (green for positive ratio, red for pending). Hover states on nav items.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 8: UPGRADE / PRICING -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">8</div>
+    <div class="screen-title">Upgrade — Subscription Plans</div>
+    <span class="enhancement-tag">Enhanced</span>
+    <div class="screen-subtitle">Clear value differentiation, checkmark features</div>
+  </div>
+  <div class="frame">
+    <div class="topbar">
+      <span class="topbar-logo"><span class="logo-icon">R</span> RegPulse</span>
+      <div class="topbar-right">
+        <div class="credit-badge"><div class="credit-dot red"></div>0 left</div>
+        <div class="avatar">PM</div>
+      </div>
+    </div>
+    <div style="background:var(--bg);padding:24px 0">
+      <div style="text-align:center;margin-bottom:24px;padding:0 20px">
+        <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">You've used all your free questions</div>
+        <div style="font-size:13px;color:var(--text-secondary)">Upgrade to keep asking. Cancel anytime. All plans include full library access.</div>
+      </div>
+      <div class="plan-grid">
+        <div class="plan-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price">&#8377;0</div>
+          <div class="plan-desc">5 lifetime questions</div>
+          <div class="plan-features">
+            <div class="plan-feature">5 question credits (lifetime)</div>
+            <div class="plan-feature">Full circular library</div>
+            <div class="plan-feature">Cited answers</div>
+          </div>
+          <button class="btn btn-outline btn-sm" style="width:100%">Current plan</button>
+        </div>
+        <div class="plan-card featured">
+          <div class="popular-badge">Most popular</div>
+          <div class="plan-name">Professional</div>
+          <div class="plan-price">&#8377;2,999<sub>/mo</sub></div>
+          <div class="plan-desc">250 questions per month</div>
+          <div class="plan-features">
+            <div class="plan-feature">250 questions/month</div>
+            <div class="plan-feature">Full circular library</div>
+            <div class="plan-feature">PDF compliance brief export</div>
+            <div class="plan-feature">Action item tracking</div>
+            <div class="plan-feature">Email support</div>
+          </div>
+          <button class="btn btn-navy" style="width:100%">Upgrade — &#8377;2,999/month</button>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-price" style="font-size:18px;margin-top:8px">Custom</div>
+          <div class="plan-desc">Unlimited questions</div>
+          <div class="plan-features">
+            <div class="plan-feature">Unlimited questions</div>
+            <div class="plan-feature">Team seats included</div>
+            <div class="plan-feature">Dedicated support &amp; SLA</div>
+            <div class="plan-feature">API access</div>
+            <div class="plan-feature">Custom onboarding</div>
+          </div>
+          <button class="btn btn-outline" style="width:100%">Contact us &rarr;</button>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:var(--text-muted);padding:0 20px">Payments processed securely by Razorpay &middot; INR only &middot; Cancel anytime</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DESIGN TOKEN REFERENCE -->
+<!-- ============================================================ -->
+<div class="screen-section">
+  <div class="screen-meta">
+    <div class="screen-number">&#9733;</div>
+    <div class="screen-title">Design Token Reference</div>
+    <div class="screen-subtitle">Colors, typography, spacing, components</div>
+  </div>
+  <div class="frame" style="padding:24px">
+    <div class="section-label">Color Palette</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:8px;background:var(--navy)"></div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">Navy</div></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:8px;background:var(--teal)"></div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">Teal</div></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:8px;background:var(--green)"></div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">Green</div></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:8px;background:var(--amber)"></div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">Amber</div></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:8px;background:var(--red)"></div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">Red</div></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:8px;background:var(--navy-light);border:1px solid var(--border)"></div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">Navy Light</div></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:8px;background:var(--teal-bg);border:1px solid var(--border)"></div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">Teal BG</div></div>
+    </div>
+
+    <div class="section-label">Pill Variants</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+      <span class="pill pill-blue">Circular</span>
+      <span class="pill pill-teal">Master Direction</span>
+      <span class="pill pill-green">Active</span>
+      <span class="pill pill-red">Superseded</span>
+      <span class="pill pill-amber">Warning</span>
+      <span class="pill pill-gray">Neutral</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="risk-badge risk-medium">MEDIUM</span>
+      <span class="risk-badge risk-low">LOW</span>
+    </div>
+
+    <div class="section-label">Button Variants</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center">
+      <button class="btn btn-navy">Primary</button>
+      <button class="btn btn-teal">Teal</button>
+      <button class="btn btn-outline">Outline</button>
+      <button class="btn btn-navy btn-sm">Small</button>
+      <button class="btn btn-outline btn-sm">Small outline</button>
+      <button class="btn-ghost">Ghost</button>
+    </div>
+
+    <div class="section-label">Typography Scale</div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:22px;font-weight:600;color:var(--text);margin-bottom:4px">22px / 600 — Stat value</div>
+      <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px">18px / 600 — Page title (auth)</div>
+      <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px">16px / 500 — Page title (app)</div>
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">14px / 500 — Section heading</div>
+      <div style="font-size:13px;color:var(--text);margin-bottom:4px">13px / 400 — Body text, inputs</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">12px / 400 — Metadata, labels</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">11px / 600 / UPPERCASE — Section labels</div>
+      <div style="font-size:12px;font-family:var(--mono);color:var(--navy);margin-bottom:4px">12px / mono — RBI/2025-26/41</div>
+    </div>
+
+    <div class="section-label">Spacing & Radius</div>
+    <div style="font-size:12px;color:var(--text-secondary);line-height:2">
+      Card radius: 12px (--radius) &middot; Control radius: 8px (--radius-md) &middot; Pill radius: 20px<br>
+      Card padding: 16px &middot; Content area: 20px &middot; Button: 8px 16px (normal) / 5px 12px (small)<br>
+      Grid gap: 10-14px &middot; Section margin: 16px &middot; Field margin: 14px
+    </div>
+  </div>
+</div>
+
+</div><!-- /mockup-container -->
+</body>
+</html>

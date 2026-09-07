@@ -1,0 +1,25 @@
+# Secrets / config
+.env
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Node / Next.js
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# Scraper
+scraper/.venv/
+scraper/test_RBI.pdf
+
+# JWT secrets
+jwt_private.pem
+
+# JWT secrets
+jwt_private.pem
